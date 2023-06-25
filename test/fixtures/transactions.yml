@@ -1,0 +1,11 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  product: one
+  quantity: 1
+  date: 2023-06-24
+
+two:
+  product: two
+  quantity: 1
+  date: 2023-06-24
