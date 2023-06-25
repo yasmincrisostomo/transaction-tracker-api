@@ -1,8 +1,15 @@
 Rails.application.routes.draw do
-  resources :transactions
-  resources :products
-  # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
+  resources :transactions do
+    collection do
+      post :upload_transactions_csv
+    end
+  end
 
-  # Defines the root path route ("/")
-  # root "articles#index"
+  resources :products do
+    member do
+      get :total_spent
+    end
+  end
+
+  get 'transactions/transactions_within_date_range_for_product/:product_id', to: 'transactions#transactions_within_date_range_for_product', as: 'transactions_within_date_range'
 end

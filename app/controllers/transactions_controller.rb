@@ -8,12 +8,10 @@ class TransactionsController < ApplicationController
     render json: @transactions
   end
 
-  # GET /transactions/1
   def show
     render json: @transaction
   end
 
-  # POST /transactions
   def create
     @transaction = Transaction.new(transaction_params)
 
@@ -24,7 +22,6 @@ class TransactionsController < ApplicationController
     end
   end
 
-  # PATCH/PUT /transactions/1
   def update
     if @transaction.update(transaction_params)
       render json: @transaction
@@ -33,19 +30,35 @@ class TransactionsController < ApplicationController
     end
   end
 
-  # DELETE /transactions/1
   def destroy
     @transaction.destroy
   end
 
-  private
-    # Use callbacks to share common setup or constraints between actions.
-    def set_transaction
-      @transaction = Transaction.find(params[:id])
-    end
+  def transactions_within_date_range_for_product
+    product = Product.find(params[:product_id])
+    start_date = params[:start_date]
+    end_date = params[:end_date]
+    transactions = product.transactions.where("date >= ? AND date <= ?", start_date, end_date)
+    render json: transactions
+  end
 
-    # Only allow a list of trusted parameters through.
-    def transaction_params
-      params.require(:transaction).permit(:product_id, :quantity, :date)
+  def upload_transactions_csv
+    file = params[:file]
+    if file.present?
+      Transaction.upload_transactions_csv(file)
+      render json: { message: "Transactions uploaded successfully" }, status: 200
+    else
+      render json: { message: "Please upload a file" }, status: 400
     end
+  end
+
+  private
+
+  def set_transaction
+    @transaction = Transaction.find(params[:id])
+  end
+
+  def transaction_params
+    params.require(:transaction).permit(:product_id, :quantity, :date)
+  end
 end
